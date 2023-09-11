@@ -2,7 +2,7 @@ from collections import defaultdict
 import cv2
 import numpy as np
 from ultralytics import YOLO
-from streamlit_webrtc import VideoTransformerBase
+from streamlit_webrtc import VideoTransformerBase, VideoFrame
 
 class YOLOv8Transformer(VideoTransformerBase):
     VEHICLE_CLASSES = {
@@ -23,7 +23,7 @@ class YOLOv8Transformer(VideoTransformerBase):
             vehicle: {"in": 0, "out": 0} for vehicle in self.VEHICLE_CLASSES
         }
 
-    def transform(self, frame):
+    def recv(self, frame: VideoFrame) -> VideoFrame:
         img = frame.to_ndarray(format="bgr24")
         
         x_line = int(img.shape[1] * 0.5)
@@ -62,7 +62,7 @@ class YOLOv8Transformer(VideoTransformerBase):
                     cv2.polylines(img, [points], isClosed=False, color=(230, 230, 230), thickness=2)
                     cv2.circle(img, (int(x), int(y)), radius=5, color=(0, 255, 0), thickness=-1)
 
-            font_scale = 0.7
+            font_scale = 0.5
             line_spacing = 25
             vertical_offset = 30
 
@@ -71,4 +71,5 @@ class YOLOv8Transformer(VideoTransformerBase):
                 cv2.putText(img, f"{vehicle.capitalize()} In: {counts['in']}", (10, y_position), cv2.FONT_HERSHEY_SIMPLEX, font_scale, (0, 255, 0), 2)
                 cv2.putText(img, f"{vehicle.capitalize()} Out: {counts['out']}", (10, y_position + line_spacing), cv2.FONT_HERSHEY_SIMPLEX, font_scale, (0, 0, 255), 2)
 
-        return img
+        # Erstellen Sie einen neuen VideoFrame und geben Sie ihn zurück
+        return VideoFrame.from_ndarray(img, format="bgr24")
