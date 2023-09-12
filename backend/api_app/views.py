@@ -1,20 +1,19 @@
-from django.http import JsonResponse, HttpResponse
+from django.http import JsonResponse
+from django.http import JsonResponse
+from .models import VehicleData
 from django.views.decorators.csrf import csrf_exempt
-from .models import Data
-import json
-
-
-
-# Create your views here.
-def data_view(request):
-    data = list(Data.objects.values("name"))
-    return JsonResponse(data, safe=False)
 
 @csrf_exempt
-def add_data(request):
+def save_vehicle_data(request):
     if request.method == "POST":
-        data = json.loads(request.body)
-        name = data.get('name')
-        Data.objects.create(name=name)
-        return HttpResponse(status=201)
-    return HttpResponse(status=400)
+        data = request.POST
+        vehicle = data.get('vehicle')
+        direction = data.get('direction')
+        timestamp = data.get('timestamp')
+        
+        # Daten in der Datenbank speichern
+        VehicleData.objects.create(vehicle=vehicle, direction=direction, timestamp=timestamp)
+        
+        return JsonResponse({"status": "success"}, status=200)
+    else:
+        return JsonResponse({"status": "invalid request"}, status=400)

@@ -1,6 +1,7 @@
 import streamlit as st
 from streamlit_webrtc import webrtc_streamer
 from utils.YOLOv8Transformer import YOLOv8Transformer
+import requests
 
 st.title("YOLOv8 Tracking with Streamlit")
 
@@ -25,8 +26,10 @@ stream = webrtc_streamer(
     }
 )
 
-if st.button('Show Timestamps and IDs'):
-    with open('data/vehicle_timestamps.txt', 'r') as file:
-        for line in file.readlines():
-            st.write(line.strip())
+# if st.button('Show Timestamps and IDs'):
+#     response = requests.get('http://localhost:8000/vehicle_timestamps/')
+#     if response.status_code == 200:
+#         for record in response.json():
+#             st.write(f"{record['vehicle']} - {record['direction']} - Timestamp: {record['timestamp']}")
+
 

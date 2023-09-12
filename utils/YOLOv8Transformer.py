@@ -5,6 +5,7 @@ import numpy as np
 from ultralytics import YOLO
 from streamlit_webrtc import VideoTransformerBase
 from datetime import datetime
+import requests
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -51,22 +52,28 @@ class YOLOv8Transformer(VideoTransformerBase):
             str: Current timestamp.
         """
         return datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-
+    
     def save_to_file(self, vehicle: str, direction: str):
         """
-        Saves vehicle direction and timestamp to a file.
+        Sendet Fahrzeugrichtung und Zeitstempel an das Django-Backend.
 
         Args:
-            vehicle (str): Name of the vehicle.
-            direction (str): Direction of the vehicle (in or out).
+            vehicle (str): Name des Fahrzeugs.
+            direction (str): Richtung des Fahrzeugs (rein oder raus).
         """
         try:
             timestamp = self._get_current_timestamp()
-            with open(self.DATA_FILE_PATH, 'a') as file:
-                file.write(f"{vehicle} - {direction} - Timestamp: {timestamp}\n")
-            logger.info(f"Saved {vehicle} - {direction} to file")
+            response = requests.post('http://127.0.0.1:8000/api/save_vehicle_data/', data={
+                'vehicle': vehicle,
+                'direction': direction,
+                'timestamp': timestamp,
+            })
+            if response.status_code == 200:
+                logger.info(f"Saved {vehicle} - {direction} to backend")
+            else:
+                logger.error(f"Failed to save data to backend. Response: {response.text}")
         except Exception as e:
-            logger.error(f"Error saving to file: {e}")
+            logger.error(f"Error saving to backend: {e}")    
 
     def _update_counter_and_save(self, vehicle: str, direction: str):
         """
