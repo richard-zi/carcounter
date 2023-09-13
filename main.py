@@ -1,57 +1,45 @@
+# Importieren der notwendigen Funktionen und Konstanten aus den Modulen
+from lib.plots import plot_metrics, plot_live_detection, plot_charts
 import streamlit as st
-from streamlit_webrtc import webrtc_streamer
-from utils.YOLOv8Transformer import YOLOv8Transformer
+import queue
+import time
 
-# Setting the page config
-st.set_page_config(
-    layout='wide',
-    initial_sidebar_state='expanded',
-    page_icon='🚗',
-    page_title="Object Detection",
-)
+q = queue.Queue()
 
-st.title("YOLOv8 Tracking with Streamlit")
+PAGE_CONFIG = {
+    'layout': 'wide',
+    'initial_sidebar_state': 'expanded',
+    'page_icon': '🚗',
+    'page_title': "Object Detection",
+}
+st.set_page_config(**PAGE_CONFIG)
 
-# Funktion zur Auswahl des Modells über Streamlit
-def select_model():
-    model_name = st.sidebar.selectbox(
-        'Wählen Sie ein Modell aus:',
-        ['yolov8l', 'yolov8n']
-    )
-    return model_name
+st.title("YOLOv8 Tracking for Traffic Analysis")
 
-# Funktion zur Initialisierung des YOLOv8Transformers
-def initialize_yolo_transformer(model_name):
-    yolo_transformer = YOLOv8Transformer(model_name)
-    return yolo_transformer
+def run_live_dashboard(functions, refresh_interval=10):
+    """
+    Führt ein Live-Update des Dashboards durch.
+    
+    Parameters:
+    - functions: Eine Liste von Funktionen, die aktualisiert werden sollen. 
+                 Jede Funktion sollte einen Streamlit-Platzhalter als Argument akzeptieren.
+    - refresh_interval: Zeit (in Sekunden) zwischen den Aktualisierungen
+    """
+    
+    # Erstellen von Platzhaltern für jede Funktion
+    placeholders = [st.empty() for _ in functions]
 
-# Funktion zur Initialisierung des Webcam-Streams
-def initialize_webcam_stream(yolo_transformer):
-    stream = webrtc_streamer(
-        key="webcam", 
-        video_processor_factory=lambda: yolo_transformer,
-        media_stream_constraints={
-            "video": {
-                "width": 1920,  # Breite in Pixel
-                "height": 1080,  # Höhe in Pixel
-                "frameRate": 30  # Framerate in fps (frames per second)
-            }, 
-            "audio": False
-        }
-    )
-    return stream
+    while True:
+        # Aktualisieren Sie die Daten und die UI in jedem Schritt der Schleife
+        for func, placeholder in zip(functions, placeholders):
+            func(placeholder)
+        
+        time.sleep(refresh_interval)
 
-def show_timestamps_and_ids():
-    with open('data/vehicle_timestamps.txt', 'r') as file:
-        for line in file.readlines():
-            st.write(line.strip())
 
 def main():
-    model_name = select_model()
-    yolo_transformer = initialize_yolo_transformer(model_name)
-    stream = initialize_webcam_stream(yolo_transformer)
-
-    if st.button('Show Timestamps and IDs'):
-        show_timestamps_and_ids()
+    plot_metrics()
+    plot_live_detection()
+    plot_charts()
 
 main()
