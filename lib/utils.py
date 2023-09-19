@@ -6,6 +6,7 @@ import csv
 import threading
 import os
 import queue
+import streamlit as st
 
 q = queue.Queue()
 
@@ -61,6 +62,25 @@ def data_to_csv_buffer(dataset):
     csv_buffer.seek(0)
 
     return csv_buffer
+
+def refresh_streamlit_ui():
+    """
+    Konfiguriert die Sidebar für die automatische Aktualisierungsoption.
+    """
+    if not "sleep_time" in st.session_state:
+        st.session_state.sleep_time = 2
+
+    if not "auto_refresh" in st.session_state:
+        st.session_state.auto_refresh = False
+
+    st.sidebar.title("Parameters")
+    auto_refresh = st.sidebar.checkbox('Auto Refresh', st.session_state.auto_refresh)
+
+    if auto_refresh:
+        number = st.sidebar.number_input('Refresh rate in seconds', value=st.session_state.sleep_time)
+        st.session_state.sleep_time = number
+    
+    return auto_refresh
 
 # Thread starten
 is_exit_target_if_main_exits = True

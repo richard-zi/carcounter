@@ -3,3 +3,4 @@
 backend/db.sqlite3
 *.pyc
 *.json
+temp/temp_data.json
