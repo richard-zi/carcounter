@@ -13,10 +13,10 @@ def plot_metrics():
     total, in_count, out_count, status = calculate_metrics(vehicle_data)
 
     col1, col2, col3, col4 = st.columns(4)
-    col1.metric("Total", total)
-    col2.metric("Towards the city center", in_count)
-    col3.metric("Out of Town", out_count)
-    col4.metric("Status", status)
+    col1.metric("Total", total, 5000)
+    col2.metric("Towards the city center", in_count, 2)
+    col3.metric("Out of Town", out_count, 90)
+    col4.metric("Status", status, "OK")
 
 # Inhalt der Mainfunktion
 def plot_live_detection():

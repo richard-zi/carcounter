@@ -31,6 +31,6 @@ def count_vehicles(dataset):
 
 def create_vehicle_metrics(dataset):
     cars, buses, trucks = count_vehicles(dataset)
-    st.write("🚗 Cars", cars)
-    st.metric("🚎 Buses", buses)
-    st.metric("🚛 Trucks", trucks)
+    st.write("🚗 Cars", cars, 5)
+    st.metric("🚎 Buses", buses, 5)
+    st.metric("🚛 Trucks", trucks,)
