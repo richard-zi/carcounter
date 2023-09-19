@@ -5,7 +5,7 @@ from streamlit_webrtc import webrtc_streamer
 def select_model():
     model_name = st.sidebar.selectbox(
         'Wählen Sie ein Modell aus:',
-        ['yolov8l', 'yolov8n', 'yolov8s']
+        ['yolov8l', 'yolov8m', 'yolov8s', 'yolov8n']
     )
     return model_name
 

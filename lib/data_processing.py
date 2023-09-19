@@ -1,26 +1,57 @@
 from lib.time_functions import select_time_range
 import streamlit as st
+import pandas as pd
 
 
 # DataFrame filtern
-def filter_dataframe(dataset):
-    start, end = select_time_range()
-    return dataset[(dataset['timestamp'] >= start) & (dataset['timestamp'] <= end)]
-  
+def filter_dataframe(dataset, start, end):
+    try:
+        return dataset[(dataset['timestamp'] >= start) & (dataset['timestamp'] <= end)]
+    except Exception as e:
+        st.error(f"⚠️ Es ist ein Fehler aufgetreten: {e}. Bitte überprüfe die Daten und versuche es erneut.")
+        
+        return pd.DataFrame()
+
 # Metriken berechnen
 def calculate_metrics(dataset):
-    dataset = filter_dataframe(dataset)
-    total = len(dataset)
-    in_count = len(dataset[dataset['direction'] == 'in'])
-    out_count = len(dataset[dataset['direction'] == 'out'])
-    status = 0 # Platzhalter
-    return total, in_count, out_count, status
+    
+    try:
+    
+        start, end, start_before, end_before = select_time_range(widget_key="calc_metrics_time_range_key")
+        
+        current_data = filter_dataframe(dataset, start, end)
+        before_data = filter_dataframe(dataset, start_before, end_before)
+        
+        total_current = len(current_data)
+        in_count_current = len(current_data[current_data['direction'] == 'in'])
+        out_count_current = len(current_data[current_data['direction'] == 'out'])
+        
+        total_before = len(before_data)
+        in_count_before = len(before_data[before_data['direction'] == 'in'])
+        out_count_before = len(before_data[before_data['direction'] == 'out'])
+
+        # Differenz berechnen
+        total_diff =  total_current - total_before
+        in_diff = in_count_current - in_count_before
+        out_diff = out_count_current - out_count_before
+        
+        placeholder = 0
+
+        return total_current, in_count_current, out_count_current, placeholder, total_diff, in_diff, out_diff
+    
+    except Exception as e:
+        st.error(f"⚠️ Es ist ein Fehler aufgetreten: {e}. Bitte überprüfe die Daten und versuche es erneut.")
+        return None, None, None, None, None, None, None
 
 def create_dataframe(dataset):
-       # Entfernen der leeren Spalte, falls vorhanden
+    # Entfernen der leeren Spalte, falls vorhanden
     if dataset.iloc[:, -1].isnull().all():
-       dataset = dataset.iloc[:, :-1]
-    #Anzeigen des DataFrame mit voller Breite
+        dataset = dataset.iloc[:, :-1]
+    
+    # Auswahl der letzten 8 Einträge
+    dataset = dataset.iloc[-8:]
+    
+    # Anzeigen des DataFrame mit voller Breite
     st.dataframe(dataset, use_container_width=True)
 
 def count_vehicles(dataset):
@@ -31,6 +62,6 @@ def count_vehicles(dataset):
 
 def create_vehicle_metrics(dataset):
     cars, buses, trucks = count_vehicles(dataset)
-    st.write("🚗 Cars", cars, 5)
-    st.metric("🚎 Buses", buses, 5)
-    st.metric("🚛 Trucks", trucks,)
+    st.metric("🚗 Cars", cars)
+    st.metric("🚎 Buses", buses)
+    st.metric("🚛 Trucks", trucks)

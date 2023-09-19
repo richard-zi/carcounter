@@ -2,3 +2,4 @@
 *.sqlite3
 backend/db.sqlite3
 *.pyc
+*.json

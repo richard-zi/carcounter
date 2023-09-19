@@ -3,20 +3,27 @@ from lib.data_processing import calculate_metrics, create_dataframe, create_vehi
 from lib.webcam_stream import initialize_webcam_stream, initialize_yolo_transformer, select_model
 from lib.vehicle_data import load_vehicle_data
 from lib.charts import create_linechart, create_barchart, create_piechart
-
+from lib.time_functions import select_time_range
+ 
+import traceback
 
 # Inhalt der Mainfunktion
 def plot_metrics():
-    st.markdown("## Metrics")
-    
-    vehicle_data = load_vehicle_data()
-    total, in_count, out_count, status = calculate_metrics(vehicle_data)
+    try:
+        st.markdown("## Metrics")
+        vehicle_data = load_vehicle_data()
+        total, in_count, out_count, placeholder, total_diff, in_diff, out_diff = calculate_metrics(vehicle_data)
 
-    col1, col2, col3, col4 = st.columns(4)
-    col1.metric("Total", total, 5000)
-    col2.metric("Towards the city center", in_count, 2)
-    col3.metric("Out of Town", out_count, 90)
-    col4.metric("Status", status, "OK")
+        col1, col2, col3, col4 = st.columns(4)
+        
+        col1.metric("Total", total, total_diff)
+        col2.metric("Towards the city center", in_count, in_diff)
+        col3.metric("Out of Town", out_count, out_diff)
+        col4.metric("Placeholder", placeholder, "OK")
+        
+    except Exception as e:
+        error_message = f"Error: {e}\n\n{traceback.format_exc()}"
+        st.error(error_message)
 
 # Inhalt der Mainfunktion
 def plot_live_detection():
@@ -26,7 +33,7 @@ def plot_live_detection():
     model_name = select_model()
     yolo_transformer = initialize_yolo_transformer(model_name)
     
-    col1, col2 = st.columns([3,1])
+    col1, col2, col3 = st.columns([1.3,1.5,1])
     
     with col1:
         st.markdown('### Webcam')
@@ -36,24 +43,18 @@ def plot_live_detection():
     with col2:
         st.markdown('### Detected Objects')
         create_dataframe(vehicle_data)
-        
-       
-
-# Inhalt der Mainfunktion
-def plot_charts():
-    st.markdown("## Charts")
-    
-    vehicle_data = load_vehicle_data()
-    col1, col2, col3 = st.columns(3)
-    
-    with col1:
-        st.markdown("### Linechart")
-        create_linechart(vehicle_data)
-
-    with col2:
-        st.markdown('### Heatmap')
-        create_barchart(vehicle_data)
 
     with col3:
-        st.markdown('### Donut chart')
-        create_piechart(vehicle_data)
+        st.markdown('### Total Vehicle Count')
+        create_vehicle_metrics(vehicle_data)
+        
+        
+def plot_charts():
+    # Call the select_time_range() function once and pass the values
+    start, end, start_before, end_before = select_time_range(widget_key="plot_time_range_key")
+    
+    vehicle_data = load_vehicle_data()
+    # Modify your create_linechart function to accept these values
+    create_linechart(vehicle_data, start, end)  # Updated this line      
+
+

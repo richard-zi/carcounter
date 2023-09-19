@@ -6,9 +6,14 @@ from ultralytics import YOLO
 from streamlit_webrtc import VideoTransformerBase
 from datetime import datetime
 import requests
+import warnings
 
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(level=logging.WARNING, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
+logging.getLogger("ultralytics").setLevel(logging.ERROR)
+logging.getLogger("streamlit_webrtc").setLevel(logging.ERROR)
+
+warnings.filterwarnings("ignore", message="transform() is deprecated.")
 
 class YOLOv8Transformer(VideoTransformerBase):
     """
@@ -39,7 +44,6 @@ class YOLOv8Transformer(VideoTransformerBase):
             self.model = YOLO(self.model_path)
             self.track_history = defaultdict(lambda: deque(maxlen=self.MAX_TRACK_LENGTH))
             self.counters = {vehicle: {"in": 0, "out": 0} for vehicle in self.VEHICLE_CLASSES}
-            logger.info(f"Initialized YOLOv8Transformer with model {model_name}")
         except Exception as e:
             logger.error(f"Error initializing YOLOv8Transformer: {e}")
             raise
@@ -68,12 +72,8 @@ class YOLOv8Transformer(VideoTransformerBase):
                 'direction': direction,
                 'timestamp': timestamp,
             })
-            if response.status_code == 200:
-                logger.info(f"Saved {vehicle} - {direction} to backend")
-            else:
-                logger.error(f"Failed to save data to backend. Response: {response.text}")
         except Exception as e:
-            logger.error(f"Error saving to backend: {e}")    
+            logger.error(f"Error saving to backend: {e}") 
 
     def _update_counter_and_save(self, vehicle: str, direction: str):
         """
