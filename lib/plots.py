@@ -8,11 +8,11 @@ from lib.time_functions import select_time_range
 import traceback
 
 # Inhalt der Mainfunktion
-def plot_metrics():
+def plot_metrics(start, end, start_before, end_before):
     try:
         st.markdown("## Metrics")
         vehicle_data = load_vehicle_data()
-        total, in_count, out_count, placeholder, total_diff, in_diff, out_diff = calculate_metrics(vehicle_data)
+        total, in_count, out_count, placeholder, total_diff, in_diff, out_diff = calculate_metrics(vehicle_data, start, end, start_before, end_before)
 
         col1, col2, col3, col4 = st.columns(4)
         
@@ -49,9 +49,8 @@ def plot_live_detection():
         create_vehicle_metrics(vehicle_data)
         
         
-def plot_charts():
+def plot_charts(start, end, start_before, end_before):
     # Call the select_time_range() function once and pass the values
-    start, end, start_before, end_before = select_time_range(widget_key="plot_time_range_key")
     
     vehicle_data = load_vehicle_data()
     # Modify your create_linechart function to accept these values

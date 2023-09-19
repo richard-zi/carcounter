@@ -1,4 +1,3 @@
-from lib.time_functions import select_time_range
 import streamlit as st
 import pandas as pd
 
@@ -13,12 +12,9 @@ def filter_dataframe(dataset, start, end):
         return pd.DataFrame()
 
 # Metriken berechnen
-def calculate_metrics(dataset):
+def calculate_metrics(dataset, start, end, start_before, end_before):
     
     try:
-    
-        start, end, start_before, end_before = select_time_range(widget_key="calc_metrics_time_range_key")
-        
         current_data = filter_dataframe(dataset, start, end)
         before_data = filter_dataframe(dataset, start_before, end_before)
         
