@@ -4,8 +4,9 @@ from lib.time_functions import select_time_range
 from lib.utils import refresh_streamlit_ui
 import streamlit as st
 import time
-from lib.vehicle_data import load_vehicle_data
-from lib.charts import filter_dataframe
+import warnings
+
+warnings.filterwarnings('ignore', category=FutureWarning)
 
 PAGE_CONFIG = {
     'layout': 'wide',
@@ -16,7 +17,6 @@ PAGE_CONFIG = {
 st.set_page_config(**PAGE_CONFIG)
 
 st.title("YOLOv8 Tracking for Traffic Analysis")
-
 
 def main():
     start, end, start_before, end_before = select_time_range(widget_key="main_time_range_key")

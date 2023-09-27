@@ -1,9 +1,8 @@
 import streamlit as st
-from lib.data_processing import calculate_metrics, create_dataframe, create_vehicle_metrics
+from lib.data_processing import calculate_metrics, create_dataframe
 from lib.webcam_stream import initialize_webcam_stream, initialize_yolo_transformer, select_model
 from lib.vehicle_data import load_vehicle_data
-from lib.charts import create_linechart, create_barchart, create_donutchart, create_and_show_plot
-from lib.time_functions import select_time_range
+from lib.charts import create_donutchart, create_and_show_plot
  
 import traceback
 
@@ -48,19 +47,8 @@ def plot_live_detection():
         create_donutchart(vehicle_data)
         
         
-def plot_charts(start, end, start_before, end_before):
-    st.markdown('## Charts')
-    # Call the select_time_range() function once and pass the values
-    col1, col2 = st.columns(2)
-    
-    with col1:
-        st.markdown('### Donutchart')
-        vehicle_data = load_vehicle_data()
-        # Modify your create_linechart function to accept these values
-        create_donutchart(vehicle_data) # Updated this line 
-    with col2:
-        st.markdown('### Linechart')
-        vehicle_data = load_vehicle_data()
-        create_and_show_plot(vehicle_data, start, end)
-
-    create_barchart(vehicle_data, start, end)
+def plot_charts(start, end):
+    st.markdown("### Traffic Flow")
+#    Call the select_time_range() function once and pass the values
+    vehicle_data = load_vehicle_data()
+    create_and_show_plot(vehicle_data, start, end)

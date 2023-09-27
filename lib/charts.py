@@ -4,7 +4,6 @@ from lib.data_processing import filter_dataframe
 import pandas as pd
 from lib.data_processing import count_vehicles
 import traceback
-import numpy as np
 import plotly.express as px
 import logging
 
@@ -61,17 +60,6 @@ def create_donutchart(dataset):
         st.error(error_message)
 
 
-def create_barchart(dataset, start, end):
-    
-    dataset_= filter_dataframe(dataset, start, end)
-    fig = px.histogram(dataset_, x="timestamp", y="direction",
-                color='direction', barmode='group',
-                height=400)
-    st.plotly_chart(fig)
-
-
-
-
 
 def create_and_show_plot(dataset, start, end):
     # Konvertieren der 'timestamp' Spalte zu datetime, falls noch nicht geschehen
@@ -93,9 +81,4 @@ def create_and_show_plot(dataset, start, end):
                   category_orders={"direction": ["in", "out"]})
     
     # Anzeigen des Diagramms in Streamlit
-    st.plotly_chart(fig)
-
-# Rufe die Funktion mit den benötigten Argumenten auf
-
-
-
+    st.plotly_chart(fig, use_container_width=True)
