@@ -4,6 +4,8 @@ from lib.time_functions import select_time_range
 from lib.utils import refresh_streamlit_ui
 import streamlit as st
 import time
+from lib.vehicle_data import load_vehicle_data
+from lib.charts import filter_dataframe
 
 PAGE_CONFIG = {
     'layout': 'wide',
@@ -18,7 +20,7 @@ st.title("YOLOv8 Tracking for Traffic Analysis")
 
 def main():
     start, end, start_before, end_before = select_time_range(widget_key="main_time_range_key")
-
+    
     plot_metrics(start, end, start_before, end_before)
     plot_live_detection()
     plot_charts(start, end, start_before, end_before)
@@ -28,4 +30,4 @@ main()
 
 if auto_refresh:
     time.sleep(st.session_state.sleep_time)
-    st.experimental_rerun()
+    st.rerun()

@@ -31,9 +31,7 @@ def calculate_metrics(dataset, start, end, start_before, end_before):
         in_diff = in_count_current - in_count_before
         out_diff = out_count_current - out_count_before
         
-        placeholder = 0
-
-        return total_current, in_count_current, out_count_current, placeholder, total_diff, in_diff, out_diff
+        return total_current, in_count_current, out_count_current, total_diff, in_diff, out_diff
     
     except Exception as e:
         st.error(f"⚠️ Es ist ein Fehler aufgetreten: {e}. Bitte überprüfe die Daten und versuche es erneut.")

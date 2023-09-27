@@ -19,9 +19,9 @@ def initialize_webcam_stream(yolo_transformer):
         video_processor_factory=lambda: yolo_transformer,
         media_stream_constraints={
             "video": {
-                "width": 1920,
-                "height": 1080,
-                "frameRate": 30
+                "width": 1280,
+                "height": 720,
+                "frameRate": 29
             }, 
             "audio": False
         }

@@ -2,7 +2,7 @@ import streamlit as st
 from lib.data_processing import calculate_metrics, create_dataframe, create_vehicle_metrics
 from lib.webcam_stream import initialize_webcam_stream, initialize_yolo_transformer, select_model
 from lib.vehicle_data import load_vehicle_data
-from lib.charts import create_linechart, create_barchart, create_piechart
+from lib.charts import create_linechart, create_barchart, create_donutchart, create_and_show_plot
 from lib.time_functions import select_time_range
  
 import traceback
@@ -12,14 +12,13 @@ def plot_metrics(start, end, start_before, end_before):
     try:
         st.markdown("## Metrics")
         vehicle_data = load_vehicle_data()
-        total, in_count, out_count, placeholder, total_diff, in_diff, out_diff = calculate_metrics(vehicle_data, start, end, start_before, end_before)
+        total, in_count, out_count, total_diff, in_diff, out_diff = calculate_metrics(vehicle_data, start, end, start_before, end_before)
 
-        col1, col2, col3, col4 = st.columns(4)
+        col1, col2, col3 = st.columns(3)
         
         col1.metric("Total", total, total_diff)
         col2.metric("Towards the city center", in_count, in_diff)
         col3.metric("Out of Town", out_count, out_diff)
-        col4.metric("Placeholder", placeholder, "OK")
         
     except Exception as e:
         error_message = f"Error: {e}\n\n{traceback.format_exc()}"
@@ -46,14 +45,22 @@ def plot_live_detection():
 
     with col3:
         st.markdown('### Total Vehicle Count')
-        create_vehicle_metrics(vehicle_data)
+        create_donutchart(vehicle_data)
         
         
 def plot_charts(start, end, start_before, end_before):
+    st.markdown('## Charts')
     # Call the select_time_range() function once and pass the values
+    col1, col2 = st.columns(2)
     
-    vehicle_data = load_vehicle_data()
-    # Modify your create_linechart function to accept these values
-    create_linechart(vehicle_data, start, end)  # Updated this line      
+    with col1:
+        st.markdown('### Donutchart')
+        vehicle_data = load_vehicle_data()
+        # Modify your create_linechart function to accept these values
+        create_donutchart(vehicle_data) # Updated this line 
+    with col2:
+        st.markdown('### Linechart')
+        vehicle_data = load_vehicle_data()
+        create_and_show_plot(vehicle_data, start, end)
 
-
+    create_barchart(vehicle_data, start, end)
