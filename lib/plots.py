@@ -47,7 +47,7 @@ def plot_live_detection():
         create_donutchart(vehicle_data)
         
         
-def plot_charts(start, end):
+def plot_charts(start, end, end_before, start_before):
     st.markdown("### Traffic Flow")
 #    Call the select_time_range() function once and pass the values
     vehicle_data = load_vehicle_data()
