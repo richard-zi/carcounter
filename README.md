@@ -39,8 +39,6 @@ streamlit run main.py
 python manage.py runserver
 ```
 
-3. Heed the on-screen prompts to initiate video stream processing.
-
 ## Technologies Used
 
 Several state-of-the-art technologies underpin this project to conduct object detection and vehicle counting:
